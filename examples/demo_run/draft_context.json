@@ -1,0 +1,31 @@
+{
+  "title": "DeepScholar Agent：多智能体深度研究与可信论文交付 Harness",
+  "background": "HR 需要快速理解一个可运行的研究 Agent MVP，系统需要留下证据、Trace 和 Word 交付物。",
+  "research_problem": "如何在论文草稿生成过程中降低无依据结论，并保留可审计交付链路？",
+  "method": [
+    "任务规划",
+    "候选文献检索",
+    "来源审查",
+    "引用检查",
+    "Word 交付"
+  ],
+  "dataset": "公开网页与用户上传材料的结构化摘要",
+  "metrics": [
+    "引用覆盖率",
+    "无依据结论率",
+    "文档交付成功率"
+  ],
+  "innovation_points": [
+    "Evidence Cards",
+    "Trace Evaluation",
+    "Human Review Gate"
+  ],
+  "paper_type": "short_paper",
+  "output_format": [
+    "docx"
+  ],
+  "references": [],
+  "missing_fields": [
+    "references"
+  ]
+}

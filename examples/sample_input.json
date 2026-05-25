@@ -1,0 +1,8 @@
+{
+  "title": "DeepScholar Agent Harness",
+  "background": "A recruiter-facing demo needs traceable research workflow and Word delivery.",
+  "research_problem": "How to reduce unsupported claims in generated paper drafts?",
+  "method": ["planning", "evidence review", "citation checking", "docx delivery"],
+  "metrics": ["citation coverage", "delivery success"],
+  "innovation_points": ["file-based research memory", "trace evaluation", "human review gate"]
+}
