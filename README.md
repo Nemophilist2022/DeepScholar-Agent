@@ -6,15 +6,15 @@ DeepScholar Agent 是一个面向 HR 展示和工程演示的 **Lightweight MVP*
 
 ## Tech Stack
 
-Python / FastAPI / LangGraph / Markdown Workspace / Web Search Provider / File Parsing / python-docx / Word COM / OOXML / Git Diff-friendly Artifacts / Trace Evaluation
+Python / FastAPI / LangGraph / Research Config / Search-Fetch Tool Contract / Markdown Workspace / Web Search Provider / File Parsing / python-docx / Word COM / OOXML / Git Diff-friendly Artifacts / Trace Evaluation
 
-LangGraph 已用于 demo graph path；MCP 在当前 MVP 中作为 extension-ready adapter 预留，不作为运行主链路的强依赖。
+LangGraph 已用于 demo graph path；项目借鉴 Open Deep Research / OpenAI Deep Research 公开架构中的 config、search/fetch、evaluation 思路，但实现为本仓库自研轻量模块；MCP 在当前 MVP 中作为 extension-ready adapter 预留，不作为运行主链路的强依赖。
 
 ## What It Demonstrates
 
 - **Agent Harness 与多智能体协作研究闭环**：`researchdraft/core/langgraph_harness.py` 使用 LangGraph StateGraph 定义 Scope → Plan → Explore → Extract → Synthesize → Review → Deliver；`LeadResearchAgent` 通过 handoff trace 展示 Explore、Review 与 Artifact Subagents 的调度链路。
 - **文件化 Research Memory**：`researchdraft/workspace/manager.py` 在运行时维护 Protocol / Task / Evidence / Artifact 四层 Markdown Workspace，生成 Evidence Cards、Claim Map、Artifact Manifest 与 Diff Summary；可用 ripgrep 对工作区做 progressive context loading 和依据回溯。
-- **Research Skills 与证据验证**：`researchdraft/skills/registry.py` 将 planning、source_search、evidence_extract、citation_check、report_synthesis、docx_delivery 抽象成可复用 Skills；Review Subagent 基于 Evidence Cards 与 `claim_map.md` 标记引用缺失、低置信证据和候选文献未确认问题。
+- **Research Skills 与证据验证**：`researchdraft/skills/registry.py` 将 planning、source_search、evidence_extract、citation_check、report_synthesis、docx_delivery 抽象成可复用 Skills；新增 `ResearchConfig`、`SearchFetchProvider` 与 `deep_research_eval`，形成 search → fetch → evaluate 的可测试研究链路。
 - **文档生成与变更安全**：通过 python-docx / OOXML 生成 Word 文档，保留标题层级、正文结构、参考文献分节和页码字段；`diff_summary.md` 记录 Markdown Workspace 与交付产物快照，降低多轮修订中的内容漂移风险。
 - **Trace 与质量评测**：生成 `trace.jsonl`、`trace.json`、`graph_handoff_trace.json` 和 `quality_report.md`，记录 Subagent Handoff、Skill 调用、工具执行、证据引用、审查反馈和产物版本；内置 Bad Case Replay 展示无依据结论检测。
 
@@ -41,6 +41,9 @@ GET  /demo/workspace
 GET  /demo/claim-map
 GET  /demo/diff
 GET  /demo/replay
+GET  /demo/config
+GET  /demo/search-fetch
+GET  /demo/evaluation
 ```
 
 ## Demo Artifacts
@@ -75,6 +78,6 @@ examples/            Demo input/output artifacts
 
 The MVP intentionally focuses on a runnable, reviewable demo:
 
-- Real: LangGraph graph path, Agent orchestration, Markdown Workspace runtime, Evidence Cards, Claim Map, Bad Case Replay, Web Search Provider abstraction, citation checks, Word generation, trace/report artifacts, FastAPI wrapper.
+- Real: LangGraph graph path, Agent orchestration, Research Config, Search/Fetch split, Evaluation Report, Markdown Workspace runtime, Evidence Cards, Claim Map, Bad Case Replay, Web Search Provider abstraction, citation checks, Word generation, trace/report artifacts, FastAPI wrapper.
 - Extension-ready: MCP tool server, vector retrieval and production persistence.
 - Safety rule: generated claims must stay grounded in Draft Context or remain as `[待补充]` / `[待确认]` markers.

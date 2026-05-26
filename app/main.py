@@ -36,8 +36,11 @@ except ModuleNotFoundError:  # Keeps contract tests importable before deps are i
         pass
 
 from researchdraft.agents.manager_agent import ResearchManagerAgent
+from researchdraft.config.research_config import ResearchConfig
 from researchdraft.core.langgraph_harness import run_research_graph
+from researchdraft.evaluation.deep_research_eval import evaluate_claims
 from researchdraft.replay.bad_case_replay import run_bad_case_replay
+from researchdraft.search.deep_search import SearchFetchProvider
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = ROOT / "examples" / "demo_run"
@@ -160,3 +163,32 @@ def demo_diff() -> str:
 @app.get("/demo/replay")
 def demo_replay() -> dict[str, Any]:
     return run_bad_case_replay()
+
+
+@app.get("/demo/config")
+def demo_config() -> dict[str, Any]:
+    return ResearchConfig.default().to_dict()
+
+
+@app.get("/demo/search-fetch")
+def demo_search_fetch(query: str = "traceable research agent") -> dict[str, Any]:
+    provider = SearchFetchProvider()
+    results = provider.search(query, max_results=3)
+    fetched = [provider.fetch(result).to_dict() for result in results]
+    return {
+        "query": query,
+        "results": [result.to_dict() for result in results],
+        "fetched_documents": fetched,
+    }
+
+
+@app.get("/demo/evaluation")
+def demo_evaluation() -> dict[str, Any]:
+    result = evaluate_claims(
+        claims=[
+            {"id": "C1", "text": "Trace is recorded", "evidence_id": "E1"},
+            {"id": "C2", "text": "Unsupported performance gain", "evidence_id": ""},
+        ],
+        evidence_cards=[{"id": "E1", "confidence": 0.9, "status": "confirmed"}],
+    )
+    return result.to_dict()

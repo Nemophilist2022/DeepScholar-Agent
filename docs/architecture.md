@@ -25,3 +25,14 @@ Agent    Subagent Subagent   Subagent    Subagent   Subagent   Subagent
 
 - LangGraph is real in the demo path.
 - MCP, vector retrieval and production database are extension adapters, not required for the HR demo.
+
+
+## Search / Fetch / Evaluate Runtime
+
+The project borrows the public Deep Research pattern of separating source discovery from source fetching:
+
+- `researchdraft/config/research_config.py` stores max loops, max sources and report style.
+- `researchdraft/search/deep_search.py` exposes `SearchFetchProvider.search()` and `fetch()`.
+- `researchdraft/evaluation/deep_research_eval.py` scores claim-evidence coverage and emits an evaluation report.
+
+This is original lightweight implementation code, not copied DeepResearch or Claude Code source.

@@ -119,18 +119,18 @@
 - Bad Case Replay：可通过 `/demo/replay` 或 `researchdraft.replay.bad_case_replay` 复现无依据结论场景。
 
 ## Agent 执行明细
-- interview | INTERVIEWING | InterviewAgent | tool=fixed_questionnaire | status=ok | time=2026-05-26T00:45:24.710424+00:00
-- planning | PLANNING | PlanningAgent | tool=paper_outline.yaml | status=ok | time=2026-05-26T00:45:24.711384+00:00
-- drafting | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-26T00:45:24.713737+00:00
-- web-searching | WEB_SEARCHING | LiteratureSearchAgent | tool=web_search_provider_or_fallback provider=fallback_mock queries=5 raw_result_count=5 deduped_result_count=5 cache_hit=True fallback_used=True | status=ok | time=2026-05-26T00:45:24.720221+00:00
-- source-reviewing | SOURCE_REVIEWING | SourceReviewAgent | tool=review_candidate_sources | status=ok | time=2026-05-26T00:45:24.721940+00:00
-- human-reviewing | HUMAN_REVIEWING | HumanReviewGate | tool=cli_candidate_confirmation | status=skipped | time=2026-05-26T00:45:24.723784+00:00
-- drafting-after-human-review | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-26T00:45:24.725858+00:00
-- literature-reviewing | LITERATURE_REVIEWING | LiteratureAgent | tool=analyze_literature_needs | status=ok | time=2026-05-26T00:45:24.726415+00:00
-- citation-checking | CITATION_CHECKING | CitationAgent | tool=check_citation_consistency | status=issues_found | time=2026-05-26T00:45:24.727588+00:00
+- interview | INTERVIEWING | InterviewAgent | tool=fixed_questionnaire | status=ok | time=2026-05-26T02:26:58.588430+00:00
+- planning | PLANNING | PlanningAgent | tool=paper_outline.yaml | status=ok | time=2026-05-26T02:26:58.595051+00:00
+- drafting | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-26T02:26:58.605616+00:00
+- web-searching | WEB_SEARCHING | LiteratureSearchAgent | tool=web_search_provider_or_fallback provider=fallback_mock queries=5 raw_result_count=5 deduped_result_count=5 cache_hit=True fallback_used=True | status=ok | time=2026-05-26T02:26:58.629048+00:00
+- source-reviewing | SOURCE_REVIEWING | SourceReviewAgent | tool=review_candidate_sources | status=ok | time=2026-05-26T02:26:58.638128+00:00
+- human-reviewing | HUMAN_REVIEWING | HumanReviewGate | tool=cli_candidate_confirmation | status=skipped | time=2026-05-26T02:26:58.647249+00:00
+- drafting-after-human-review | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-26T02:26:58.657854+00:00
+- literature-reviewing | LITERATURE_REVIEWING | LiteratureAgent | tool=analyze_literature_needs | status=ok | time=2026-05-26T02:26:58.660884+00:00
+- citation-checking | CITATION_CHECKING | CitationAgent | tool=check_citation_consistency | status=issues_found | time=2026-05-26T02:26:58.666814+00:00
   - failure_reason: 引用来源缺失
-- formatting | FORMATTING | WordFormatAgent | tool=tool_assign_heading_styles, tool_format_body, tool_setup_page_numbers, tool_format_references | status=ok | time=2026-05-26T00:45:24.787450+00:00
-- verifying | VERIFYING | VerifierAgent | tool=verify_content_web_literature_citation_and_format | status=ok | time=2026-05-26T00:45:24.789221+00:00
+- formatting | FORMATTING | WordFormatAgent | tool=tool_assign_heading_styles, tool_format_body, tool_setup_page_numbers, tool_format_references | status=ok | time=2026-05-26T02:26:58.924950+00:00
+- verifying | VERIFYING | VerifierAgent | tool=verify_content_web_literature_citation_and_format | status=ok | time=2026-05-26T02:26:58.927090+00:00
 
 ## 版本限制
 - 搜索结果只是候选文献线索，不自动写入正式参考文献。
