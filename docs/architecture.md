@@ -1,23 +1,27 @@
 # Architecture
 
-DeepScholar Agent uses a lightweight Manager-Specialist Harness.
+DeepScholar Agent now exposes both a lightweight LangGraph path and the original deterministic Manager-Specialist Harness.
 
 ```text
 Scope -> Plan -> Explore -> Extract -> Synthesize -> Review -> Deliver
   |       |        |          |           |          |          |
-Interview Planning Search   Source      Writing    Verifier   Word/Report
-Agent     Agent    Agent    Review      Agent      Agent      Agent
+Lead     Planning Explore    Evidence    Synthesis  Review     Artifact
+Agent    Subagent Subagent   Subagent    Subagent   Subagent   Subagent
 ```
 
-## Core Runtime
+## Runtime
 
-- `ResearchManagerAgent` owns `ResearchDraftState` and stage transitions.
-- Specialist agents are deterministic Python components with optional LLM hooks.
-- Tool outputs are persisted as Markdown, JSON and DOCX artifacts.
-- `TraceRecorder` records task id, agent name, stage, input/output keys, tool call, status and failure reason.
+- `researchdraft/core/langgraph_harness.py` defines the LangGraph `StateGraph` and writes `graph_handoff_trace.json`.
+- `ResearchManagerAgent` still performs the actual deterministic execution so the demo remains stable and testable.
+- `researchdraft/workspace/manager.py` materializes Markdown Research Memory: protocol, task plan, Evidence Cards, Claim Map, artifact manifest and diff summary.
 
-## Extension Adapters
+## Evidence and Review
 
-- LangGraph can replace the manager loop once graph persistence is required.
-- MCP can expose search, file parsing, citation check and DOCX generation as remote tools.
-- Vector retrieval can be introduced behind `SearchProvider` without changing the delivery layer.
+- Candidate literature is converted to Evidence Cards.
+- `claim_map.md` links claims to evidence and marks `requires_followup` when evidence is missing, low-confidence or unconfirmed.
+- `quality_report.md` includes citation coverage, unsupported claim rate, follow-up pass rate and document delivery success rate.
+
+## Extension Boundary
+
+- LangGraph is real in the demo path.
+- MCP, vector retrieval and production database are extension adapters, not required for the HR demo.

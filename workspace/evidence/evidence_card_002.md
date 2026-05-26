@@ -1,9 +1,12 @@
 ---
-id: E002
-source_type: candidate_literature
-confidence: medium
+id: C002
+source_url: https://example.org/search?q=Graph+Harness+Demo+literature+review+paper
+confidence: 0.60
+status: pending_review
 ---
 
-# Evidence Card E002: Human-reviewed Sources
+# Evidence Card C002: Candidate source for Graph Harness Demo literature review paper
 
-Candidate literature remains in `candidate_literature.json` as `pending_review` until the user confirms it through the human review gate.
+- Snippet: Fallback candidate only. User confirmation is required before citation use.
+- Risk flags: missing_year
+- Review state: requires_followup

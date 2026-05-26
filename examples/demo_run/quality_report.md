@@ -65,7 +65,7 @@
 ## 联网文献搜索与人工确认
 - 搜索 provider：fallback_mock
 - 搜索 query 列表：DeepScholar Agent：多智能体深度研究与可信论文交付 Harness literature review paper；如何在论文草稿生成过程中降低无依据结论，并保留可审计交付链路？ literature review paper；公开网页与用户上传材料的结构化摘要 literature review paper；任务规划 literature review paper；候选文献检索 literature review paper
-- 是否使用缓存：False
+- 是否使用缓存：True
 - 候选去重前数量：5
 - 候选去重后数量：5
 - 候选文献数量：5
@@ -83,10 +83,10 @@
 - draft_context.json: 通过；examples\demo_run\draft_context.json，大小 891 字节
 - draft.md: 通过；examples\demo_run\draft.md，大小 1974 字节
 - paper.docx: 通过；examples\demo_run\paper.docx，大小 38563 字节
-- candidate_literature.json: 通过；examples\demo_run\candidate_literature.json，大小 5237 字节
+- candidate_literature.json: 通过；examples\demo_run\candidate_literature.json，大小 5236 字节
 - source_review_report.json: 通过；examples\demo_run\source_review_report.json，大小 2762 字节
 - search_cache.json: 通过；examples\demo_run\search_cache.json，大小 4023 字节
-- trace.json: 通过；examples\demo_run\trace.json，大小 4251 字节
+- trace.json: 通过；examples\demo_run\trace.json，大小 4250 字节
 - 标题居中: 通过；首页标题居中
 - 标题加粗: 通过；首页标题加粗
 - 标题层级: 通过；Heading 段落数 9
@@ -111,19 +111,26 @@
 - Trace Agent 覆盖: 通过；检测到 Agent: CitationAgent, HumanReviewGate, InterviewAgent, LiteratureAgent, LiteratureSearchAgent, PlanningAgent, SourceReviewAgent, VerifierAgent, WordFormatAgent, WritingAgent
 - Trace 字段完整性: 通过；每步均包含 task_id/agent/stage/input_keys/output_keys/tool_call/status/failure_reason/timestamp
 
+## Trace 与质量评测
+- 引用覆盖率：100%
+- 无依据结论率：50%
+- 补检通过率：0%
+- 文档交付成功率：100%
+- Bad Case Replay：可通过 `/demo/replay` 或 `researchdraft.replay.bad_case_replay` 复现无依据结论场景。
+
 ## Agent 执行明细
-- interview | INTERVIEWING | InterviewAgent | tool=fixed_questionnaire | status=ok | time=2026-05-25T03:27:54.435529+00:00
-- planning | PLANNING | PlanningAgent | tool=paper_outline.yaml | status=ok | time=2026-05-25T03:27:54.436596+00:00
-- drafting | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-25T03:27:54.440121+00:00
-- web-searching | WEB_SEARCHING | LiteratureSearchAgent | tool=web_search_provider_or_fallback provider=fallback_mock queries=5 raw_result_count=5 deduped_result_count=5 cache_hit=False fallback_used=True | status=ok | time=2026-05-25T03:27:54.445221+00:00
-- source-reviewing | SOURCE_REVIEWING | SourceReviewAgent | tool=review_candidate_sources | status=ok | time=2026-05-25T03:27:54.447188+00:00
-- human-reviewing | HUMAN_REVIEWING | HumanReviewGate | tool=cli_candidate_confirmation | status=skipped | time=2026-05-25T03:27:54.449294+00:00
-- drafting-after-human-review | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-25T03:27:54.451742+00:00
-- literature-reviewing | LITERATURE_REVIEWING | LiteratureAgent | tool=analyze_literature_needs | status=ok | time=2026-05-25T03:27:54.452348+00:00
-- citation-checking | CITATION_CHECKING | CitationAgent | tool=check_citation_consistency | status=issues_found | time=2026-05-25T03:27:54.453676+00:00
+- interview | INTERVIEWING | InterviewAgent | tool=fixed_questionnaire | status=ok | time=2026-05-26T00:45:24.710424+00:00
+- planning | PLANNING | PlanningAgent | tool=paper_outline.yaml | status=ok | time=2026-05-26T00:45:24.711384+00:00
+- drafting | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-26T00:45:24.713737+00:00
+- web-searching | WEB_SEARCHING | LiteratureSearchAgent | tool=web_search_provider_or_fallback provider=fallback_mock queries=5 raw_result_count=5 deduped_result_count=5 cache_hit=True fallback_used=True | status=ok | time=2026-05-26T00:45:24.720221+00:00
+- source-reviewing | SOURCE_REVIEWING | SourceReviewAgent | tool=review_candidate_sources | status=ok | time=2026-05-26T00:45:24.721940+00:00
+- human-reviewing | HUMAN_REVIEWING | HumanReviewGate | tool=cli_candidate_confirmation | status=skipped | time=2026-05-26T00:45:24.723784+00:00
+- drafting-after-human-review | DRAFTING | WritingAgent | tool=llm_optional_or_template | status=ok | time=2026-05-26T00:45:24.725858+00:00
+- literature-reviewing | LITERATURE_REVIEWING | LiteratureAgent | tool=analyze_literature_needs | status=ok | time=2026-05-26T00:45:24.726415+00:00
+- citation-checking | CITATION_CHECKING | CitationAgent | tool=check_citation_consistency | status=issues_found | time=2026-05-26T00:45:24.727588+00:00
   - failure_reason: 引用来源缺失
-- formatting | FORMATTING | WordFormatAgent | tool=tool_assign_heading_styles, tool_format_body, tool_setup_page_numbers, tool_format_references | status=ok | time=2026-05-25T03:27:54.516401+00:00
-- verifying | VERIFYING | VerifierAgent | tool=verify_content_web_literature_citation_and_format | status=ok | time=2026-05-25T03:27:54.518274+00:00
+- formatting | FORMATTING | WordFormatAgent | tool=tool_assign_heading_styles, tool_format_body, tool_setup_page_numbers, tool_format_references | status=ok | time=2026-05-26T00:45:24.787450+00:00
+- verifying | VERIFYING | VerifierAgent | tool=verify_content_web_literature_citation_and_format | status=ok | time=2026-05-26T00:45:24.789221+00:00
 
 ## 版本限制
 - 搜索结果只是候选文献线索，不自动写入正式参考文献。

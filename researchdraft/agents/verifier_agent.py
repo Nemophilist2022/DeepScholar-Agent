@@ -65,6 +65,13 @@ class VerifierAgent:
             candidate_literature=candidate_literature,
             source_review_report=source_review_report,
             human_review_result=human_review_result,
+            quality_metrics=_quality_metrics(
+                missing,
+                confirmations,
+                citation_report,
+                candidate_literature,
+                docx_path,
+            ),
             report_path=str(report_path),
         )
         report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -181,6 +188,15 @@ def _render_report(
         lines.append(_check_line(check))
     lines.append("")
 
+    lines.append("## Trace 与质量评测")
+    metrics = result.quality_metrics
+    lines.append(f"- 引用覆盖率：{metrics.get('citation_coverage_rate', 0.0):.0%}")
+    lines.append(f"- 无依据结论率：{metrics.get('unsupported_claim_rate', 0.0):.0%}")
+    lines.append(f"- 补检通过率：{metrics.get('followup_pass_rate', 0.0):.0%}")
+    lines.append(f"- 文档交付成功率：{metrics.get('document_delivery_success_rate', 0.0):.0%}")
+    lines.append("- Bad Case Replay：可通过 `/demo/replay` 或 `researchdraft.replay.bad_case_replay` 复现无依据结论场景。")
+    lines.append("")
+
     lines.append("## Agent 执行明细")
     for entry in trace_entries:
         data = asdict(entry)
@@ -226,6 +242,24 @@ def _append_citation_literature_report(lines: list[str], citation, literature) -
         lines.append(f"- 文献需求分析：{_items_text(literature.literature_needs)}")
         lines.append(f"- 建议补充的文献方向：{_items_text(literature.suggested_directions)}")
         lines.append(f"- 人工确认项：{_items_text(literature.manual_confirmation_items)}")
+
+
+def _quality_metrics(missing, confirmations, citation, candidates, docx_path: str) -> dict[str, float]:
+    reference_count = getattr(citation, "reference_count", 0) if citation else 0
+    citation_count = len(getattr(citation, "in_text_citations", [])) if citation else 0
+    citation_coverage = 1.0 if reference_count == 0 and citation_count == 0 else min(citation_count / max(reference_count, 1), 1.0)
+    unsupported_total = len(missing) + len(confirmations)
+    unsupported_rate = min(unsupported_total / max(unsupported_total + 3, 1), 1.0)
+    candidate_items = getattr(candidates, "candidates", []) if candidates else []
+    confirmed = [item for item in candidate_items if item.get("status") == "confirmed"]
+    followup_pass = len(confirmed) / len(candidate_items) if candidate_items else 0.0
+    delivery_success = 1.0 if Path(docx_path).exists() and Path(docx_path).stat().st_size > 0 else 0.0
+    return {
+        "citation_coverage_rate": round(citation_coverage, 2),
+        "unsupported_claim_rate": round(unsupported_rate, 2),
+        "followup_pass_rate": round(followup_pass, 2),
+        "document_delivery_success_rate": round(delivery_success, 2),
+    }
 
 
 def _append_web_search_report(lines: list[str], candidates, source_review, human_review) -> None:

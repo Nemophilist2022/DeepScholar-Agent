@@ -53,6 +53,7 @@ class VerificationResult:
     candidate_literature: object | None = None
     source_review_report: object | None = None
     human_review_result: object | None = None
+    quality_metrics: dict[str, float] = field(default_factory=dict)
     report_path: str = ""
 
     @property

@@ -36,9 +36,12 @@ except ModuleNotFoundError:  # Keeps contract tests importable before deps are i
         pass
 
 from researchdraft.agents.manager_agent import ResearchManagerAgent
+from researchdraft.core.langgraph_harness import run_research_graph
+from researchdraft.replay.bad_case_replay import run_bad_case_replay
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = ROOT / "examples" / "demo_run"
+WORKSPACE_DIR = ROOT / "workspace"
 
 app = FastAPI(
     title="DeepScholar Agent MVP",
@@ -71,6 +74,10 @@ def _run_demo(output_dir: Path = DEMO_DIR):
     ).run()
 
 
+def _run_graph_demo(output_dir: Path = DEMO_DIR):
+    return run_research_graph(output_dir=output_dir, answers=list(DEMO_ANSWERS))
+
+
 def _read_json(path: Path) -> Any:
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"Not generated: {path.name}")
@@ -84,9 +91,12 @@ def health() -> dict[str, str]:
 
 @app.post("/demo/run")
 def run_demo() -> dict[str, Any]:
-    result = _run_demo()
+    graph_result = _run_graph_demo()
+    result = graph_result.manager_result
     return {
         "ok": result.ok,
+        "graph_nodes": graph_result.graph_nodes,
+        "handoff_trace_path": graph_result.handoff_trace_path,
         "output_dir": result.output_dir,
         "context_path": result.context_path,
         "draft_path": result.draft_path,
@@ -115,3 +125,38 @@ def demo_docx() -> FileResponse:
     if not path.exists():
         raise HTTPException(status_code=404, detail="Run POST /demo/run first")
     return FileResponse(path, filename="deepscholar-demo-paper.docx")
+
+
+@app.get("/demo/workspace")
+def demo_workspace() -> dict[str, Any]:
+    files = []
+    for path in sorted(WORKSPACE_DIR.rglob("*")):
+        if path.is_file():
+            files.append(
+                {
+                    "path": str(path.relative_to(ROOT)),
+                    "size": path.stat().st_size,
+                }
+            )
+    return {"root": str(WORKSPACE_DIR.relative_to(ROOT)), "files": files}
+
+
+@app.get("/demo/claim-map", response_class=PlainTextResponse)
+def demo_claim_map() -> str:
+    path = WORKSPACE_DIR / "claim_map.md"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Run POST /demo/run first")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/demo/diff", response_class=PlainTextResponse)
+def demo_diff() -> str:
+    path = WORKSPACE_DIR / "artifacts" / "diff_summary.md"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Run POST /demo/run first")
+    return path.read_text(encoding="utf-8")
+
+
+@app.get("/demo/replay")
+def demo_replay() -> dict[str, Any]:
+    return run_bad_case_replay()

@@ -1,0 +1,44 @@
+[
+  {
+    "node": "scope",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "LeadResearchAgent",
+    "handoff": "LeadResearchAgent -> LeadResearchAgent"
+  },
+  {
+    "node": "plan",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "PlanningSubagent",
+    "handoff": "LeadResearchAgent -> PlanningSubagent"
+  },
+  {
+    "node": "explore",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "ExploreSubagent",
+    "handoff": "LeadResearchAgent -> ExploreSubagent"
+  },
+  {
+    "node": "extract",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "EvidenceSubagent",
+    "handoff": "LeadResearchAgent -> EvidenceSubagent"
+  },
+  {
+    "node": "synthesize",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "SynthesisSubagent",
+    "handoff": "LeadResearchAgent -> SynthesisSubagent"
+  },
+  {
+    "node": "review",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "ReviewSubagent",
+    "handoff": "LeadResearchAgent -> ReviewSubagent"
+  },
+  {
+    "node": "deliver",
+    "from_agent": "LeadResearchAgent",
+    "to_agent": "ArtifactSubagent",
+    "handoff": "LeadResearchAgent -> ArtifactSubagent"
+  }
+]

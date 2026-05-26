@@ -15,6 +15,7 @@ from researchdraft.agents.word_format_agent import WordFormatAgent
 from researchdraft.agents.writing_agent import WritingAgent
 from researchdraft.core.state import ResearchDraftState, RunResult, Stage
 from researchdraft.core.trace import TraceRecorder
+from researchdraft.workspace.manager import WorkspaceManager
 
 
 class ResearchManagerAgent:
@@ -50,6 +51,7 @@ class ResearchManagerAgent:
         if self.state.verification and self.state.verification.has_format_problem:
             self._run_formatting(task_id="formatting-retry")
             self._run_verifying(task_id="verifying-retry")
+        self._run_workspace_materialization()
         self.state.stage = Stage.DONE
         json_trace_path = self.trace.write_json(self.output_dir / "trace.json")
         self.state.trace_path = json_trace_path
@@ -272,6 +274,52 @@ class ResearchManagerAgent:
         self.state.report_path = result.report_path
         entry.status = "ok" if not result.has_problem else "issues_found"
         entry.failure_reason = _verification_failure_reason(result)
+        self.trace.rewrite_jsonl()
+        self.trace.write_json(self.output_dir / "trace.json")
+
+    def _run_workspace_materialization(self) -> None:
+        candidates = (
+            self.state.candidate_literature.candidates
+            if self.state.candidate_literature
+            else []
+        )
+        missing = (
+            self.state.verification.missing_items
+            if self.state.verification
+            else []
+        )
+        confirmations = (
+            self.state.verification.confirmation_items
+            if self.state.verification
+            else []
+        )
+        title = self.state.context.title if self.state.context else ""
+        result = WorkspaceManager("workspace").materialize(
+            context_title=title,
+            candidates=candidates,
+            missing_items=missing,
+            confirmation_items=confirmations,
+            artifact_paths={
+                "draft": self.state.draft_path,
+                "docx": self.state.docx_path,
+                "report": self.state.report_path,
+                "trace": self.state.trace_path,
+            },
+        )
+        self.trace.record(
+            task_id="workspace-materialization",
+            agent="ArtifactSubagent",
+            stage=Stage.DONE.value,
+            input_keys=["candidate_literature", "verification", "artifact_paths"],
+            output_keys=[
+                "workspace/protocol.md",
+                "workspace/task_plan.md",
+                "workspace/claim_map.md",
+                "workspace/artifacts/manifest.md",
+                "workspace/artifacts/diff_summary.md",
+            ],
+            tool_call=f"markdown_workspace_materialize evidence_cards={len(result.evidence_paths)} handoff=LeadResearchAgent->ArtifactSubagent",
+        )
         self.trace.rewrite_jsonl()
         self.trace.write_json(self.output_dir / "trace.json")
 

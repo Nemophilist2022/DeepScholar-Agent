@@ -40,6 +40,10 @@ class DeepScholarMVPContractTests(unittest.TestCase):
         self.assertIn("/demo/run", routes)
         self.assertIn("/demo/trace", routes)
         self.assertIn("/demo/report", routes)
+        self.assertIn("/demo/workspace", routes)
+        self.assertIn("/demo/claim-map", routes)
+        self.assertIn("/demo/diff", routes)
+        self.assertIn("/demo/replay", routes)
 
     def test_workspace_contract_files_exist(self):
         root = Path(__file__).resolve().parents[1]

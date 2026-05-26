@@ -111,7 +111,7 @@
   "provider": "fallback_mock",
   "raw_result_count": 5,
   "deduped_result_count": 5,
-  "cache_hit": false,
+  "cache_hit": true,
   "fallback_used": true,
   "failure_reason": "",
   "output_path": "examples\\demo_run\\candidate_literature.json",
